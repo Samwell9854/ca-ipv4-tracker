@@ -1,0 +1,28 @@
+{
+  "updated": "2026-11-24T23:12:39Z",
+  "lists": {
+    "ca-ipv4.txt": {
+      "cidrs": 6434,
+      "addresses": 67452672,
+      "sha256": "827d9f472b3c727c42fb96f8715c68c8fd57ed0543bfa9cb890de792ff4f7cfb"
+    },
+    "ca-ipv4-no-vpn-hosting.txt": {
+      "cidrs": 6577,
+      "addresses": 65330432,
+      "sha256": "bd7c6f209681e4aa6ed5d9757a7b28b948f8d944e326ee67089b934769b56775"
+    }
+  },
+  "sources": {
+    "rir_ca_entries": {
+      "arin": 9165,
+      "ripencc": 156,
+      "apnic": 22,
+      "lacnic": 0,
+      "afrinic": 0
+    },
+    "exclusion_entries": {
+      "vpn": 11212,
+      "datacenter": 45925
+    }
+  }
+}

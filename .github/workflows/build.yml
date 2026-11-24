@@ -1,0 +1,50 @@
+name: build
+
+on:
+  schedule:
+    # Weekly, Monday 04:23 UTC. GitHub may start scheduled runs late.
+    - cron: "23 4 * * 1"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Accept a change larger than 10 % vs the previous build"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      # Plain git instead of third-party actions: nothing outside this
+      # repository's own code runs with write access to it.
+      - name: Check out
+        env:
+          TOKEN: ${{ github.token }}
+        run: git clone --depth 1 "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" repo
+
+      - name: Build
+        working-directory: repo
+        env:
+          FORCE: ${{ inputs.force && '1' || '0' }}
+        run: python3 -I build.py
+
+      - name: Commit if changed
+        working-directory: repo
+        run: |
+          if [ -z "$(git status --porcelain -- data)" ]; then
+            echo "No change."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data
+          git commit -m "data: update $(date -u +%F)"
+          git push
