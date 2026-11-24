@@ -184,7 +184,7 @@ def write_list(path, nets):
     with open(tmp, "w") as f:
         f.write(text)
     os.replace(tmp, path)
-    return hashlib.sha256(text.encode()).hexdigest()
+    return hashlib.sha256(text.encode()).hexdigest(), len(text.encode())
 
 
 def main():
@@ -222,23 +222,23 @@ def main():
     check_change("ca-ipv4-no-vpn-hosting", OUT_FILTERED, addresses(filtered), force)
 
     os.makedirs(DATA, exist_ok=True)
-    sha_all = write_list(OUT_ALL, ca)
-    sha_filtered = write_list(OUT_FILTERED, filtered)
+    sha_all, bytes_all = write_list(OUT_ALL, ca)
+    sha_filtered, bytes_filtered = write_list(OUT_FILTERED, filtered)
 
-    # meta.json only changes when a list changes, so an unchanged build
-    # makes no commit.
+    # meta.json only changes when a list (or its stats) changes, so an
+    # unchanged build makes no commit.
     try:
         with open(OUT_META) as f:
             old_meta = json.load(f)
     except (FileNotFoundError, ValueError):
         old_meta = {}
-    old_shas = {k: v.get("sha256") for k, v in old_meta.get("lists", {}).items()}
     new_lists = {
-        "ca-ipv4.txt": {"cidrs": len(ca), "addresses": addresses(ca), "sha256": sha_all},
+        "ca-ipv4.txt": {"cidrs": len(ca), "addresses": addresses(ca),
+                        "bytes": bytes_all, "sha256": sha_all},
         "ca-ipv4-no-vpn-hosting.txt": {"cidrs": len(filtered), "addresses": addresses(filtered),
-                                       "sha256": sha_filtered},
+                                       "bytes": bytes_filtered, "sha256": sha_filtered},
     }
-    if {k: v["sha256"] for k, v in new_lists.items()} != old_shas:
+    if new_lists != old_meta.get("lists"):
         meta = {
             "updated": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
             "lists": new_lists,

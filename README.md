@@ -6,7 +6,7 @@ IPv4 ranges registered to Canada, rebuilt weekly.
 |---|---|
 | [`data/ca-ipv4.txt`](data/ca-ipv4.txt) | Every IPv4 range the five Regional Internet Registries list as allocated or assigned to Canada (`CA`), collapsed into CIDRs |
 | [`data/ca-ipv4-no-vpn-hosting.txt`](data/ca-ipv4-no-vpn-hosting.txt) | The same, minus ranges listed as VPN or hosting/datacenter by [X4BNet lists_vpn](https://github.com/X4BNet/lists_vpn) |
-| [`data/meta.json`](data/meta.json) | Last change date, CIDR and address counts, SHA-256 of each list |
+| [`data/meta.json`](data/meta.json) | Last change date, and for each list its CIDR and address counts, size in bytes and SHA-256 |
 
 Lists are sorted, one CIDR per line, with no comments or blank lines.
 
